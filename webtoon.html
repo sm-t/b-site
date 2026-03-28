@@ -166,7 +166,7 @@
       try {
         if (window !== window.top) { window.top.navigateTo(url); return; }
       } catch(e) {}
-      window.location.href = (url === 'home.html' && window.top === window) ? 'index.html' : url;
+      window.location.href = (url === 'home.html' && window.top === window) ? 'shell.html' : url;
     }
     function goBack() { gotoPage('home.html'); }
   </script>

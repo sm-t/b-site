@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>피투성이 대공의 품에 안겨</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    #main-frame { width: 100%; height: 100%; border: none; display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- 오디오는 shell에만 존재 — 페이지 전환 시 절대 중단되지 않음 -->
+  <audio id="bgm" src="rsc/blood-soaked duke.mp3" loop preload="auto"></audio>
+
+  <!-- 모든 콘텐츠 페이지를 iframe 안에서 전환 -->
+  <iframe id="main-frame" src="home.html" allow="autoplay"></iframe>
+
+  <script>
+    const bgm = document.getElementById('bgm');
+    const frame = document.getElementById('main-frame');
+
+    // ── 자식 iframe에서 호출하는 네비게이션 함수 (스크립트 최상단에 정의) ──
+    window.navigateTo = function(url) {
+      frame.src = url;
+    };
+
+    // 사용자가 의도적으로 음악을 끈 상태인지 추적
+    window.bgmUserPaused = false;
+
+    // start.html에서 START 버튼을 누르고 진입한 경우 — 사용자 클릭 직후이므로 autoplay 허용됨
+    try {
+      if (sessionStorage.getItem('from-start') === '1') {
+        sessionStorage.removeItem('from-start');
+        bgm.play().catch(() => null);
+      }
+    } catch(e) {}
+
+    // ── BGM 재생 시도 (사용자가 끈 경우에는 재생 안 함) ──
+    function tryPlay() {
+      if (!window.bgmUserPaused) {
+        bgm.play().catch(() => null);
+      }
+    }
+
+    // iframe 로드 시마다 재생 시도
+    frame.addEventListener('load', function() {
+      tryPlay();
+    });
+
+    // shell 자체에 클릭이 있을 경우에도 unlock 시도
+    document.addEventListener('click', function() {
+      tryPlay();
+    }, { once: true });
+  </script>
+
+</body>
+</html>

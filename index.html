@@ -5,55 +5,68 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>피투성이 대공의 품에 안겨</title>
   <style>
+    @font-face { font-family: 'Heir of Light'; src: url('rsc/HeirofLightBold.ttf') format('truetype'); font-weight: 700; }
+    @font-face { font-family: 'Heir of Light'; src: url('rsc/HeirofLightRegular.ttf') format('truetype'); font-weight: 400; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-    #main-frame { width: 100%; height: 100%; border: none; display: block; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body {
+      background-image: url('rsc/img_start_bg.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(24px, 5vh, 48px);
+    }
+    .title-img {
+      width: min(600px, 80vw, 70vh);
+      height: min(600px, 80vw, 70vh);
+      object-fit: contain;
+    }
+    .start-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(12px, 2.5vw, 24px);
+      cursor: pointer;
+      user-select: none;
+    }
+    .start-btn:hover { opacity: 0.65; }
+    .start-btn img {
+      width: clamp(36px, 6vw, 72px);
+      height: auto;
+      aspect-ratio: 4 / 1;
+      object-fit: contain;
+    }
+    .pin-right { transform: scaleX(-1); }
+    .start-btn span {
+      color: #000;
+      text-align: center;
+      font-family: 'Heir of Light', sans-serif;
+      font-size: clamp(18px, min(3.5vw, 4.5vh), 36px);
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+    }
   </style>
 </head>
 <body>
 
-  <!-- 오디오는 shell에만 존재 — 페이지 전환 시 절대 중단되지 않음 -->
-  <audio id="bgm" src="rsc/blood-soaked duke.mp3" loop preload="auto"></audio>
+  <img class="title-img" src="rsc/img_title.png" alt="피투성이 대공의 품에 안겨">
 
-  <!-- 모든 콘텐츠 페이지를 iframe 안에서 전환 -->
-  <iframe id="main-frame" src="home.html" allow="autoplay"></iframe>
+  <div class="start-btn" onclick="goStart()">
+    <img src="rsc/icon_pin.png" alt="">
+    <span>START</span>
+    <img class="pin-right" src="rsc/icon_pin.png" alt="">
+  </div>
 
   <script>
-    const bgm = document.getElementById('bgm');
-    const frame = document.getElementById('main-frame');
-
-    // ── 자식 iframe에서 호출하는 네비게이션 함수 (스크립트 최상단에 정의) ──
-    window.navigateTo = function(url) {
-      frame.src = url;
-    };
-
-    // 사용자가 의도적으로 음악을 끈 상태인지 추적
-    window.bgmUserPaused = false;
-
-    // start.html에서 START 버튼을 누르고 진입한 경우 — 사용자 클릭 직후이므로 autoplay 허용됨
-    try {
-      if (sessionStorage.getItem('from-start') === '1') {
-        sessionStorage.removeItem('from-start');
-        bgm.play().catch(() => null);
-      }
-    } catch(e) {}
-
-    // ── BGM 재생 시도 (사용자가 끈 경우에는 재생 안 함) ──
-    function tryPlay() {
-      if (!window.bgmUserPaused) {
-        bgm.play().catch(() => null);
-      }
+    function goStart() {
+      sessionStorage.setItem('from-start', '1');
+      window.location.href = 'shell.html';
     }
-
-    // iframe 로드 시마다 재생 시도
-    frame.addEventListener('load', function() {
-      tryPlay();
-    });
-
-    // shell 자체에 클릭이 있을 경우에도 unlock 시도
-    document.addEventListener('click', function() {
-      tryPlay();
-    }, { once: true });
   </script>
 
 </body>
