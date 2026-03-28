@@ -69,19 +69,23 @@
       display: flex;
       flex-direction: row;
       justify-content: center;
-      align-items: stretch;
+      align-items: center;
       gap: 24px;
     }
 
     /* ── 장소 카드 ── */
     .place-card {
       flex: 0 0 auto;
-      width: 413px;
+      width: min(413px, calc((100vw - 144px) / 3));
       border: none;
       cursor: pointer;
       overflow: hidden;
       transition: opacity 0.15s;
     }
+
+    .place-card:nth-child(1) { aspect-ratio: 1536 / 2744; }
+    .place-card:nth-child(2) { aspect-ratio: 1536 / 2754; }
+    .place-card:nth-child(3) { aspect-ratio: 1536 / 2754; }
 
     .place-card img {
       width: 100%;
@@ -91,6 +95,35 @@
     }
 
     .place-card:hover { opacity: 0.85; }
+
+    /* ── 반응형: 680px 이하 → 1열 세로 정렬 ── */
+    @media (max-width: 680px) {
+      html, body { height: auto; overflow: visible; }
+      body { min-height: 100vh; }
+
+      .page-content {
+        flex: none;
+        flex-direction: column;
+        align-items: center;
+        overflow: visible;
+        min-height: unset;
+      }
+
+      .place-card {
+        width: 100%;
+        min-width: 340px;
+        flex: none;
+      }
+
+      /* 원본 비율 유지 */
+      .place-card:nth-child(1) { aspect-ratio: 1536 / 2744; } /* palace */
+      .place-card:nth-child(2) { aspect-ratio: 1536 / 2754; } /* castle */
+      .place-card:nth-child(3) { aspect-ratio: 1536 / 2754; } /* etc */
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 24px 16px 48px; }
+    }
   </style>
 </head>
 <body>
@@ -120,11 +153,10 @@
 
   <script>
     function gotoPage(url) {
-      if (window !== window.top) {
-        window.top.navigateTo(url);
-      } else {
-        window.location.href = url === 'home.html' ? 'index.html' : url;
-      }
+      try {
+        if (window !== window.top) { window.top.navigateTo(url); return; }
+      } catch(e) {}
+      window.location.href = (url === 'home.html' && window.top === window) ? 'index.html' : url;
     }
     function goBack() { gotoPage('home.html'); }
     function goToPlace(name) { gotoPage(name + '.html'); }

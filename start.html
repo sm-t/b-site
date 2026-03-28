@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>피투성이 대공의 품에 안겨</title>
+  <style>
+    @font-face { font-family: 'Heir of Light'; src: url('rsc/HeirofLightBold.ttf') format('truetype'); font-weight: 700; }
+    @font-face { font-family: 'Heir of Light'; src: url('rsc/HeirofLightRegular.ttf') format('truetype'); font-weight: 400; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body {
+      background-image: url('rsc/img_start_bg.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(24px, 5vh, 48px);
+    }
+    .title-img {
+      width: min(600px, 80vw, 70vh);
+      height: min(600px, 80vw, 70vh);
+      object-fit: contain;
+    }
+    .start-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(12px, 2.5vw, 24px);
+      cursor: pointer;
+      user-select: none;
+    }
+    .start-btn:hover { opacity: 0.65; }
+    .start-btn img {
+      width: clamp(36px, 6vw, 72px);
+      height: auto;
+      aspect-ratio: 4 / 1;
+      object-fit: contain;
+    }
+    .pin-right { transform: scaleX(-1); }
+    .start-btn span {
+      color: #000;
+      text-align: center;
+      font-family: 'Heir of Light', sans-serif;
+      font-size: clamp(18px, min(3.5vw, 4.5vh), 36px);
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+    }
+  </style>
+</head>
+<body>
+
+  <img class="title-img" src="rsc/img_title.png" alt="피투성이 대공의 품에 안겨">
+
+  <div class="start-btn" onclick="goStart()">
+    <img src="rsc/icon_pin.png" alt="">
+    <span>START</span>
+    <img class="pin-right" src="rsc/icon_pin.png" alt="">
+  </div>
+
+  <script>
+    function goStart() {
+      sessionStorage.setItem('from-start', '1');
+      window.location.href = 'index.html';
+    }
+  </script>
+
+</body>
+</html>

@@ -182,6 +182,43 @@
       font-weight: 700;
       line-height: normal;
     }
+
+    /* ── 반응형: 1240px 이하 → 1열 세로 정렬 ── */
+    @media (max-width: 680px) {
+      html, body {
+        height: auto;
+        overflow: visible;
+      }
+      body {
+        min-height: 100vh;
+      }
+      .page-content {
+        flex: none;
+        flex-direction: column;
+        overflow: visible;
+        min-height: unset;
+      }
+      .karl-card {
+        width: 100%;
+        min-width: 340px;
+        flex: none;
+        aspect-ratio: 1080 / 1912;
+      }
+      .others-grid {
+        width: 100%;
+        min-width: 340px;
+        flex: none;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+      }
+      .char-card {
+        aspect-ratio: 4 / 3;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 24px 16px 48px; }
+    }
   </style>
 </head>
 <body>
@@ -255,11 +292,10 @@
 
   <script>
     function gotoPage(url) {
-      if (window !== window.top) {
-        window.top.navigateTo(url);
-      } else {
-        window.location.href = url === 'home.html' ? 'index.html' : url;
-      }
+      try {
+        if (window !== window.top) { window.top.navigateTo(url); return; }
+      } catch(e) {}
+      window.location.href = (url === 'home.html' && window.top === window) ? 'index.html' : url;
     }
     function goBack() { gotoPage('home.html'); }
     function goToChar(name) { gotoPage(name + '.html'); }

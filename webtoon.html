@@ -163,11 +163,10 @@
     updateLayout();
 
     function gotoPage(url) {
-      if (window !== window.top) {
-        window.top.navigateTo(url);
-      } else {
-        window.location.href = url === 'home.html' ? 'index.html' : url;
-      }
+      try {
+        if (window !== window.top) { window.top.navigateTo(url); return; }
+      } catch(e) {}
+      window.location.href = (url === 'home.html' && window.top === window) ? 'index.html' : url;
     }
     function goBack() { gotoPage('home.html'); }
   </script>
