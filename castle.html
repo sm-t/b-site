@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>알텐부르크 고성 - 피투성이 대공의 품에 안겨</title>
+  <style>
+    @font-face {
+      font-family: 'Heir of Light';
+      src: url('rsc/HeirofLightBold.ttf') format('truetype');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'Heir of Light';
+      src: url('rsc/HeirofLightRegular.ttf') format('truetype');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'Angel wish';
+      src: url('rsc/Angel wish.ttf') format('truetype');
+      font-weight: 400;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background: #000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── 헤더 (뒤로 + 타이틀) ── */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-shrink: 0;
+      padding: 36px 60px 24px 48px;
+      background: #000;
+    }
+
+    /* ── 뒤로 버튼 ── */
+    .back-btn {
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 5px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .back-btn img {
+      width: 70px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .back-btn span {
+      color: #fff;
+      font-family: 'Heir of Light', sans-serif;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+    }
+
+    .back-btn:hover { opacity: 0.65; }
+
+    /* ── 페이지명 ── */
+    .page-title {
+      color: #fff;
+      text-align: right;
+      font-family: 'Angel wish', serif;
+      font-size: 56px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+
+    /* ── 콘텐츠 영역 (이미지 크게보기 + 리스트) ── */
+    .content-area {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: row;
+      gap: 16px;
+      padding: 0 60px 36px 48px;
+      align-items: flex-start;
+    }
+
+    /* ── 메인 이미지 뷰어 (4:3) ── */
+    .main-viewer {
+      height: 100%;
+      aspect-ratio: 4 / 3;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: #111;
+    }
+
+    .main-viewer img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ── 이미지 리스트 ── */
+    .image-list-wrapper {
+      width: 216px; /* 192px 콘텐츠 + 24px 스크롤바 간격 */
+      max-height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 24px;
+      padding-right: 24px;
+    }
+
+    .image-list-wrapper::-webkit-scrollbar {
+      width: 6px;
+    }
+    .image-list-wrapper::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .image-list-wrapper::-webkit-scrollbar-thumb {
+      background-color: #ADADAD;
+      border-radius: 3px;
+    }
+
+    /* ── 썸네일 아이템 ── */
+    .thumb-item {
+      height: 145px;
+      align-self: stretch;
+      aspect-ratio: 143 / 108;
+      overflow: hidden;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: opacity 0.15s;
+      outline: 2px solid transparent;
+      outline-offset: -2px;
+    }
+
+    .thumb-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .thumb-item:hover { opacity: 0.75; }
+    .thumb-item.active { outline-color: rgba(255, 255, 255, 0.75); }
+  </style>
+</head>
+<body>
+
+  <audio id="bgm" src="rsc/blood-soaked duke.mp3" loop></audio>
+
+  <!-- 헤더 -->
+  <header class="page-header">
+    <div class="back-btn" onclick="goBack()">
+      <img src="rsc/icon_backArrowWhite.png" alt="">
+      <span>뒤로</span>
+    </div>
+    <div class="page-title">Altenburg Castle</div>
+  </header>
+
+  <!-- 콘텐츠 -->
+  <div class="content-area">
+    <div class="main-viewer" id="main-viewer">
+      <img id="main-img" src="" alt="">
+    </div>
+    <div class="image-list-wrapper" id="image-list"></div>
+  </div>
+
+  <script>
+    const IMAGES = [
+      'rsc/img_castle_exterior.png',
+      'rsc/img_castle_exterior-1.png',
+      'rsc/img_castle_exterior-2.png',
+      'rsc/img_castle_fortress.png',
+      'rsc/img_castle_fortressWall.png',
+      'rsc/img_castle_fortressRooftop.png',
+      'rsc/img_castle_backDoor.png',
+      'rsc/img_castle_sideDoor.png',
+      'rsc/img_castle_corridor.png',
+      'rsc/img_castle_bedroom.png',
+      'rsc/img_castle_bedroom-1.png',
+      'rsc/img_castle_banquetHall.png',
+      'rsc/img_castle_cafeteria.png',
+      'rsc/img_castle_karlsRoom.png',
+      'rsc/img_castle_oldLibrary.png',
+      'rsc/img_castle_stable.png',
+      'rsc/img_castle_training.png',
+      'rsc/img_castle_garden.png',
+    ];
+
+    const mainImg = document.getElementById('main-img');
+    const imageList = document.getElementById('image-list');
+    let activeThumb = null;
+
+    function selectImage(src, thumb) {
+      mainImg.src = src;
+      if (activeThumb) activeThumb.classList.remove('active');
+      activeThumb = thumb;
+      thumb.classList.add('active');
+    }
+
+    IMAGES.forEach((src, i) => {
+      const item = document.createElement('div');
+      item.className = 'thumb-item';
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = '';
+      item.appendChild(img);
+      item.addEventListener('click', () => selectImage(src, item));
+      imageList.appendChild(item);
+      if (i === 0) selectImage(src, item);
+    });
+
+    // ── BGM ──
+    const bgm = document.getElementById('bgm');
+
+    function saveBGMState() {
+      sessionStorage.setItem('bgm-state', JSON.stringify({
+        time: bgm.currentTime,
+        paused: bgm.paused
+      }));
+    }
+
+    window.addEventListener('pagehide', saveBGMState);
+    window.addEventListener('beforeunload', saveBGMState);
+
+    window.addEventListener('pageshow', function(e) {
+      if (!e.persisted) return;
+      const raw = sessionStorage.getItem('bgm-state');
+      const state = raw ? JSON.parse(raw) : null;
+      if (state && state.paused) return;
+      bgm.play().catch(() => {});
+    });
+
+    (function restoreBGM() {
+      const raw = sessionStorage.getItem('bgm-state');
+      const state = raw ? JSON.parse(raw) : null;
+      if (state) {
+        bgm.currentTime = state.time || 0;
+        if (state.paused) return;
+      }
+      bgm.play().catch(() => {
+        const resume = () => {
+          bgm.play().catch(() => {});
+          document.removeEventListener('click', resume);
+          document.removeEventListener('keydown', resume);
+        };
+        document.addEventListener('click', resume);
+        document.addEventListener('keydown', resume);
+      });
+    })();
+
+    function goBack() {
+      saveBGMState();
+      window.location.href = 'places.html';
+    }
+  </script>
+
+</body>
+</html>

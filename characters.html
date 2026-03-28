@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>등장인물 - 피투성이 대공의 품에 안겨</title>
+  <style>
+    @font-face {
+      font-family: 'Heir of Light';
+      src: url('rsc/HeirofLightBold.ttf') format('truetype');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'Heir of Light';
+      src: url('rsc/HeirofLightRegular.ttf') format('truetype');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'Angel wish';
+      src: url('rsc/Angel wish.ttf') format('truetype');
+      font-weight: 400;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background-image: url('rsc/img_paper_white.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      flex-direction: column;
+      padding: 36px 48px 48px;
+    }
+
+    /* ── 뒤로 버튼 ── */
+    .back-btn {
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 5px;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-bottom: 12px;
+      user-select: none;
+    }
+
+    .back-btn img {
+      width: 70px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .back-btn span {
+      color: #000;
+      font-family: 'Heir of Light', sans-serif;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+    }
+
+    .back-btn:hover { opacity: 0.65; }
+
+    /* ── 페이지 콘텐츠 (카드 영역) ── */
+    .page-content {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: row;
+      gap: 16px;
+    }
+
+    /* ── 칼 샤크센 메인 카드 ── */
+    .karl-card {
+      flex: 0 0 auto;
+      width: min(476px, 35vw);
+      /* height는 flex stretch로 부모 채움 */
+      border: 3px solid #000;
+      background: url('rsc/img_karl_thumbnail.png') top center / cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: opacity 0.15s;
+    }
+
+    .karl-card:hover { opacity: 0.88; }
+
+    .name-frame {
+      display: flex;
+      padding: clamp(28px, 5.5vh, 56px) 24px 24px 24px;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, #000 100%);
+    }
+
+    .name-group {
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+      align-self: stretch;
+    }
+
+    .name-en {
+      color: #fff;
+      font-family: 'Angel wish', serif;
+      font-size: clamp(24px, 5.5vh, 56px);
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+
+    .name-ko {
+      color: #fff;
+      font-family: 'Heir of Light', sans-serif;
+      font-size: clamp(12px, 1.95vh, 20px);
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+      padding-bottom: 0.15em;
+    }
+
+    /* ── 나머지 6인 그리드 ── */
+    .others-grid {
+      flex: 1 1 0;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    /* ── 소형 캐릭터 카드 ── */
+    .char-card {
+      border: 3px solid #000;
+      background: top center / cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      cursor: pointer;
+      overflow: hidden;
+      transition: opacity 0.15s;
+    }
+
+    .char-card:hover { opacity: 0.85; }
+
+    .card-text {
+      display: flex;
+      padding: clamp(36px, 7vh, 72px) 16px 16px 16px;
+      flex-direction: row;
+      align-items: flex-end;
+      gap: 8px;
+      align-self: stretch;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, #000 100%);
+    }
+
+    .card-name-en {
+      color: #fff;
+      font-family: 'Angel wish', serif;
+      font-size: clamp(14px, 3.1vh, 32px);
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+
+    .card-name-ko {
+      color: #fff;
+      font-family: 'Heir of Light', sans-serif;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+    }
+  </style>
+</head>
+<body>
+
+  <audio id="bgm" src="rsc/blood-soaked duke.mp3" loop></audio>
+
+  <!-- 뒤로 버튼 -->
+  <div class="back-btn" onclick="goBack()">
+    <img src="rsc/icon_backArrow.png" alt="">
+    <span>뒤로</span>
+  </div>
+
+  <!-- 카드 영역 -->
+  <div class="page-content">
+
+    <!-- 칼 샤크센 메인 카드 -->
+    <div class="karl-card" onclick="goToChar('karl')">
+      <div class="name-frame">
+        <div class="name-group">
+          <span class="name-en">Karl Schaksen</span>
+          <span class="name-ko">칼 샤크센</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 나머지 6인 그리드 -->
+    <div class="others-grid">
+
+      <div class="char-card" style="background-image:url('rsc/img_ernst_thumbnail.png');" onclick="goToChar('ernst')">
+        <div class="card-text">
+          <span class="card-name-en">Ernst Schaksen</span>
+          <span class="card-name-ko">에른스트 샤크센</span>
+        </div>
+      </div>
+
+      <div class="char-card" style="background-image:url('rsc/img_isolde_thumbnail.png');" onclick="goToChar('isolde')">
+        <div class="card-text">
+          <span class="card-name-en">Isolde von Schaksen</span>
+          <span class="card-name-ko">이졸데 본 샤크센</span>
+        </div>
+      </div>
+
+      <div class="char-card" style="background-image:url('rsc/img_frits_thumbnail.png');" onclick="goToChar('frits')">
+        <div class="card-text">
+          <span class="card-name-en">Frits Hartmann</span>
+          <span class="card-name-ko">프리츠 하르트만</span>
+        </div>
+      </div>
+
+      <div class="char-card" style="background-image:url('rsc/img_walter_thumbnail.png');" onclick="goToChar('walter')">
+        <div class="card-text">
+          <span class="card-name-en">Walter Becker</span>
+          <span class="card-name-ko">발터 베커</span>
+        </div>
+      </div>
+
+      <div class="char-card" style="background-image:url('rsc/img_wilhelm_thumbnail.png');" onclick="goToChar('wilhelm')">
+        <div class="card-text">
+          <span class="card-name-en">Wilhelm Calven</span>
+          <span class="card-name-ko">빌헬름 캘번</span>
+        </div>
+      </div>
+
+      <div class="char-card" style="background-image:url('rsc/img_henriette_thumbnail.png');" onclick="goToChar('henriette')">
+        <div class="card-text">
+          <span class="card-name-en">Henriette Calven</span>
+          <span class="card-name-ko">헨리에테 캘번</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const bgm = document.getElementById('bgm');
+
+    function saveBGMState() {
+      sessionStorage.setItem('bgm-state', JSON.stringify({
+        time: bgm.currentTime,
+        paused: bgm.paused
+      }));
+    }
+
+    window.addEventListener('pagehide', saveBGMState);
+    window.addEventListener('beforeunload', saveBGMState);
+
+    window.addEventListener('pageshow', function(e) {
+      if (!e.persisted) return;
+      const raw = sessionStorage.getItem('bgm-state');
+      const state = raw ? JSON.parse(raw) : null;
+      if (state && state.paused) return;
+      bgm.play().catch(() => {});
+    });
+
+    (function restoreBGM() {
+      const raw = sessionStorage.getItem('bgm-state');
+      const state = raw ? JSON.parse(raw) : null;
+
+      if (state) {
+        bgm.currentTime = state.time || 0;
+        if (state.paused) return;
+      }
+
+      bgm.play().catch(() => {
+        const resume = () => {
+          bgm.play().catch(() => {});
+          document.removeEventListener('click', resume);
+          document.removeEventListener('keydown', resume);
+        };
+        document.addEventListener('click', resume);
+        document.addEventListener('keydown', resume);
+      });
+    })();
+
+    function goBack() {
+      saveBGMState();
+      window.location.href = 'index.html';
+    }
+
+    function goToChar(name) {
+      saveBGMState();
+      window.location.href = name + '.html';
+    }
+  </script>
+
+</body>
+</html>

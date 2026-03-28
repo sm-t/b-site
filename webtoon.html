@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>웹툰보기 - 피투성이 대공의 품에 안겨</title>
+  <style>
+    @font-face {
+      font-family: 'Heir of Light';
+      src: url('rsc/HeirofLightBold.ttf') format('truetype');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'Heir of Light';
+      src: url('rsc/HeirofLightRegular.ttf') format('truetype');
+      font-weight: 400;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      background: #000;
+    }
+
+    /* ── 뒤로 버튼 (항상 같은 자리 고정) ── */
+    .back-btn {
+      position: fixed;
+      top: 36px;
+      left: 48px;
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 200;
+      user-select: none;
+    }
+
+    .back-btn.hidden {
+      display: none;
+    }
+
+    .back-btn img {
+      width: 70px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .back-btn span {
+      color: #fff;
+      font-family: 'Heir of Light', sans-serif;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+    }
+
+    .back-btn:hover { opacity: 0.65; }
+
+    /* ── 딤 오버레이 (좁은 화면에서 탭 시 노출) ── */
+    .dim-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 150;
+    }
+
+    .dim-overlay.active {
+      display: block;
+    }
+
+    /* ── 웹툰 이미지 영역 ── */
+    .webtoon-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #000;
+      /* gap 완전 제거 */
+      gap: 0;
+      font-size: 0;
+      line-height: 0;
+    }
+
+    .webtoon-wrap img {
+      /* 최대 720px, 이하일 경우 화면 너비와 동일하게 */
+      width: min(720px, 100%);
+      height: auto;
+      display: block;
+      /* 이미지 사이 gap 방지 */
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <audio id="bgm" src="rsc/blood-soaked duke.mp3" loop></audio>
+
+  <!-- 뒤로 버튼 -->
+  <div class="back-btn" id="back-btn">
+    <img src="rsc/icon_backArrowWhite.png" alt="">
+    <span>뒤로</span>
+  </div>
+
+  <!-- 딤 오버레이 -->
+  <div class="dim-overlay" id="dim-overlay"></div>
+
+  <!-- 웹툰 이미지 (gap 없이 순서대로) -->
+  <div class="webtoon-wrap">
+    <img src="rsc/webtoon1.webp" alt="">
+    <img src="rsc/webtoon2.webp" alt="">
+    <img src="rsc/webtoon3.webp" alt="">
+    <img src="rsc/webtoon4.webp" alt="">
+    <img src="rsc/webtoon5.webp" alt="">
+  </div>
+
+  <script>
+    const backBtn = document.getElementById('back-btn');
+    const dimOverlay = document.getElementById('dim-overlay');
+
+    const NARROW_THRESHOLD = 720; // 이 너비 이하에서는 이미지가 화면 꽉 채움 → 버튼 겹침
+
+    function isNarrow() {
+      return window.innerWidth <= NARROW_THRESHOLD;
+    }
+
+    // 너비에 따라 버튼 표시 여부 업데이트
+    function updateLayout() {
+      if (!isNarrow()) {
+        // 넓은 화면: 항상 버튼 표시, 딤 제거
+        backBtn.classList.remove('hidden');
+        dimOverlay.classList.remove('active');
+      } else {
+        // 좁은 화면: 딤이 활성화 중이 아니면 버튼 숨김
+        if (!dimOverlay.classList.contains('active')) {
+          backBtn.classList.add('hidden');
+        }
+      }
+    }
+
+    // 탭/클릭: 좁은 화면에서 딤 + 버튼 토글
+    document.addEventListener('click', function(e) {
+      if (!isNarrow()) return;
+      if (backBtn.contains(e.target)) return; // 뒤로 버튼 클릭은 별도 처리
+
+      if (dimOverlay.classList.contains('active')) {
+        // 두 번째 탭: 딤 + 버튼 숨김
+        dimOverlay.classList.remove('active');
+        backBtn.classList.add('hidden');
+      } else {
+        // 첫 번째 탭: 딤 + 버튼 표시
+        dimOverlay.classList.add('active');
+        backBtn.classList.remove('hidden');
+      }
+    });
+
+    // 뒤로 버튼 클릭 (버블링 차단해서 document 핸들러 방지)
+    backBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      goBack();
+    });
+
+    window.addEventListener('resize', updateLayout);
+    updateLayout();
+
+    // ── BGM ──
+    const bgm = document.getElementById('bgm');
+
+    function saveBGMState() {
+      sessionStorage.setItem('bgm-state', JSON.stringify({
+        time: bgm.currentTime,
+        paused: bgm.paused
+      }));
+    }
+
+    window.addEventListener('pagehide', saveBGMState);
+    window.addEventListener('beforeunload', saveBGMState);
+
+    window.addEventListener('pageshow', function(e) {
+      if (!e.persisted) return;
+      const raw = sessionStorage.getItem('bgm-state');
+      const state = raw ? JSON.parse(raw) : null;
+      if (state && state.paused) return;
+      bgm.play().catch(() => {});
+    });
+
+    (function restoreBGM() {
+      const raw = sessionStorage.getItem('bgm-state');
+      const state = raw ? JSON.parse(raw) : null;
+      if (state) {
+        bgm.currentTime = state.time || 0;
+        if (state.paused) return;
+      }
+      bgm.play().catch(() => {
+        const resume = () => {
+          bgm.play().catch(() => {});
+          document.removeEventListener('click', resume);
+          document.removeEventListener('keydown', resume);
+        };
+        document.addEventListener('click', resume);
+        document.addEventListener('keydown', resume);
+      });
+    })();
+
+    function goBack() {
+      saveBGMState();
+      window.location.href = 'index.html';
+    }
+  </script>
+
+</body>
+</html>

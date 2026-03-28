@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>주요장소 - 피투성이 대공의 품에 안겨</title>
+  <style>
+    @font-face {
+      font-family: 'Heir of Light';
+      src: url('rsc/HeirofLightBold.ttf') format('truetype');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'Heir of Light';
+      src: url('rsc/HeirofLightRegular.ttf') format('truetype');
+      font-weight: 400;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background-image: url('rsc/img_paper_white.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      flex-direction: column;
+      padding: 36px 48px 48px;
+    }
+
+    /* ── 뒤로 버튼 ── */
+    .back-btn {
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 5px;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-bottom: 12px;
+      user-select: none;
+    }
+
+    .back-btn img {
+      width: 70px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .back-btn span {
+      color: #000;
+      font-family: 'Heir of Light', sans-serif;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+    }
+
+    .back-btn:hover { opacity: 0.65; }
+
+    /* ── 장소 카드 영역 ── */
+    .page-content {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: stretch;
+      gap: 24px;
+    }
+
+    /* ── 장소 카드 ── */
+    .place-card {
+      flex: 0 0 auto;
+      width: 413px;
+      border: none;
+      cursor: pointer;
+      overflow: hidden;
+      transition: opacity 0.15s;
+    }
+
+    .place-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .place-card:hover { opacity: 0.85; }
+  </style>
+</head>
+<body>
+
+  <audio id="bgm" src="rsc/blood-soaked duke.mp3" loop></audio>
+
+  <!-- 뒤로 버튼 -->
+  <div class="back-btn" onclick="goBack()">
+    <img src="rsc/icon_backArrow.png" alt="">
+    <span>뒤로</span>
+  </div>
+
+  <!-- 장소 카드 영역 -->
+  <div class="page-content">
+
+    <div class="place-card" onclick="goToPlace('palace')">
+      <img src="rsc/img_palace_thumbnail.png" alt="Imperial Palace">
+    </div>
+
+    <div class="place-card" onclick="goToPlace('castle')">
+      <img src="rsc/img_castle_thumbnail.png" alt="Altenburg Castle">
+    </div>
+
+    <div class="place-card" onclick="goToPlace('etc')">
+      <img src="rsc/img_etc_thumbnail.png" alt="Other Spaces">
+    </div>
+
+  </div>
+
+  <script>
+    const bgm = document.getElementById('bgm');
+
+    function saveBGMState() {
+      sessionStorage.setItem('bgm-state', JSON.stringify({
+        time: bgm.currentTime,
+        paused: bgm.paused
+      }));
+    }
+
+    window.addEventListener('pagehide', saveBGMState);
+    window.addEventListener('beforeunload', saveBGMState);
+
+    window.addEventListener('pageshow', function(e) {
+      if (!e.persisted) return;
+      const raw = sessionStorage.getItem('bgm-state');
+      const state = raw ? JSON.parse(raw) : null;
+      if (state && state.paused) return;
+      bgm.play().catch(() => {});
+    });
+
+    (function restoreBGM() {
+      const raw = sessionStorage.getItem('bgm-state');
+      const state = raw ? JSON.parse(raw) : null;
+
+      if (state) {
+        bgm.currentTime = state.time || 0;
+        if (state.paused) return;
+      }
+
+      bgm.play().catch(() => {
+        const resume = () => {
+          bgm.play().catch(() => {});
+          document.removeEventListener('click', resume);
+          document.removeEventListener('keydown', resume);
+        };
+        document.addEventListener('click', resume);
+        document.addEventListener('keydown', resume);
+      });
+    })();
+
+    function goBack() {
+      saveBGMState();
+      window.location.href = 'index.html';
+    }
+
+    function goToPlace(name) {
+      saveBGMState();
+      window.location.href = name + '.html';
+    }
+  </script>
+
+</body>
+</html>
