@@ -40,7 +40,6 @@
   </style>
 </head>
 <body>
-  <audio id="bgm" src="rsc/blood-soaked duke.mp3" loop></audio>
   <div class="char-image-wrap"><img class="char-img" src="rsc/img_henriette.png" alt=""></div>
 
   <div class="back-btn" onclick="goBack()">
@@ -76,24 +75,11 @@
   </div>
 
   <script>
-    const bgm = document.getElementById('bgm');
-    function saveBGMState() { sessionStorage.setItem('bgm-state', JSON.stringify({ time: bgm.currentTime, paused: bgm.paused })); }
-    window.addEventListener('pagehide', saveBGMState);
-    window.addEventListener('beforeunload', saveBGMState);
-    window.addEventListener('pageshow', function(e) {
-      if (!e.persisted) return;
-      const raw = sessionStorage.getItem('bgm-state');
-      const state = raw ? JSON.parse(raw) : null;
-      if (state && state.paused) return;
-      bgm.play().catch(() => {});
-    });
-    (function() {
-      const raw = sessionStorage.getItem('bgm-state');
-      const state = raw ? JSON.parse(raw) : null;
-      if (state) { bgm.currentTime = state.time || 0; if (state.paused) return; }
-      bgm.play().catch(() => { const r = () => { bgm.play().catch(() => {}); document.removeEventListener('click', r); }; document.addEventListener('click', r); });
-    })();
-    function goBack() { saveBGMState(); window.location.href = 'characters.html'; }
+    function gotoPage(url) {
+      if (window !== window.top) { window.top.navigateTo(url); }
+      else { window.location.href = url === 'home.html' ? 'index.html' : url; }
+    }
+    function goBack() { gotoPage('characters.html'); }
   </script>
 </body>
 </html>

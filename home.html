@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>피투성이 대공의 품에 안겨</title>
+  <style>
+    @font-face {
+      font-family: 'Heir of Light';
+      src: url('rsc/HeirofLightBold.ttf') format('truetype');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'Heir of Light';
+      src: url('rsc/HeirofLightRegular.ttf') format('truetype');
+      font-weight: 400;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    body {
+      background-image: url('rsc/img_paper_white.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 104px 0 64px;
+    }
+
+    /* ── 음악 컨트롤 (좌측 상단) ── */
+    .music-control {
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 100;
+    }
+
+    .music-control .icon-music {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    .toggle-wrapper {
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      border: 2px solid hsla(0, 0%, 0%, 1);
+      border-radius: 100px;
+    }
+
+    .toggle-btn {
+      display: flex;
+      padding: 4px 16px;
+      justify-content: center;
+      align-items: center;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-family: 'Heir of Light', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      font-style: normal;
+      line-height: normal;
+      color: #000;
+      text-align: center;
+      border-radius: 100px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .toggle-btn.active {
+      background: #000;
+      color: #fff;
+    }
+
+    /* ── 메인 콘텐츠 프레임 ── */
+    .main-content {
+      display: flex;
+      width: min(520px, 90vw);
+      flex-direction: column;
+      align-items: center;
+      gap: 56px;
+      height: 100%;
+      max-height: 100%;
+      overflow: visible;
+    }
+
+    /* ── 타이틀 이미지 + 떠있는 애니메이션 ── */
+    @keyframes float {
+      0%   { transform: translateY(0px); }
+      50%  { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .title-img {
+      flex: 1 1 0;
+      min-height: 0;
+      width: 100%;
+      max-width: min(520px, 90vw);
+      max-height: min(460px, 57vh);
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    /* ── 메뉴 리스트 ── */
+    .menu-list {
+      display: flex;
+      width: min(295px, 80vw);
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(8px, 2vh, 24px);
+      flex-shrink: 0;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      align-self: stretch;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .menu-item span,
+    .menu-item a {
+      color: #000;
+      text-align: center;
+      font-family: 'Heir of Light', sans-serif;
+      font-size: clamp(14px, 2.2vh, 28px);
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+      text-decoration: none;
+    }
+
+    .menu-item a { color: #000; }
+
+    .menu-item:hover span,
+    .menu-item:hover a { opacity: 0.6; }
+
+    .arrow {
+      width: clamp(36px, 5vw, 72px);
+      height: auto;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .arrow-right { transform: scaleX(-1); }
+  </style>
+</head>
+<body>
+
+  <!-- 음악 컨트롤 — 부모 frame의 bgm 제어 -->
+  <div class="music-control">
+    <img class="icon-music" src="rsc/icon_music.png" alt="music">
+    <div class="toggle-wrapper">
+      <button class="toggle-btn" id="btn-on" onclick="setMusic(true)">On</button>
+      <button class="toggle-btn active" id="btn-off" onclick="setMusic(false)">Off</button>
+    </div>
+  </div>
+
+  <!-- 메인 콘텐츠 -->
+  <div class="main-content">
+    <img class="title-img" src="rsc/img_title.png" alt="피투성이 대공의 품에 안겨">
+
+    <nav class="menu-list">
+      <div class="menu-item" onclick="navigate('characters')">
+        <img class="arrow" src="rsc/icon_pin.png" alt="">
+        <span>등장인물</span>
+        <img class="arrow arrow-right" src="rsc/icon_pin.png" alt="">
+      </div>
+
+      <div class="menu-item" onclick="navigate('places')">
+        <span>주요장소</span>
+      </div>
+
+      <div class="menu-item" onclick="navigate('webtoon')">
+        <span>웹툰보기</span>
+      </div>
+
+      <div class="menu-item" onclick="navigate('chat')">
+        <img class="arrow" src="rsc/icon_pin.png" alt="">
+        <a href="#" id="chat-link">대화하기</a>
+        <img class="arrow arrow-right" src="rsc/icon_pin.png" alt="">
+      </div>
+    </nav>
+  </div>
+
+  <script>
+    // ── 부모 frame의 BGM 접근 ──
+    function getBGM() {
+      try {
+        return window.top !== window ? window.top.document.getElementById('bgm') : null;
+      } catch(e) { return null; }
+    }
+
+    const btnOn  = document.getElementById('btn-on');
+    const btnOff = document.getElementById('btn-off');
+
+    function syncUI() {
+      const bgm = getBGM();
+      if (!bgm) return;
+      const playing = !bgm.paused;
+      btnOn.classList.toggle('active', playing);
+      btnOff.classList.toggle('active', !playing);
+    }
+
+    function setMusic(on) {
+      const bgm = getBGM();
+      if (!bgm) return;
+      if (on) bgm.play().catch(() => {});
+      else bgm.pause();
+    }
+
+    // 부모 BGM 상태 변화에 따라 UI 동기화
+    const bgm = getBGM();
+    if (bgm) {
+      bgm.addEventListener('play', syncUI);
+      bgm.addEventListener('pause', syncUI);
+      bgm.addEventListener('ended', syncUI);
+      syncUI();
+    }
+
+    // 첫 번째 상호작용 시 부모 frame의 BGM 재생 unlock
+    document.addEventListener('click', function() {
+      const b = getBGM();
+      if (b) b.play().catch(() => {});
+    }, { once: true });
+
+    // ── 네비게이션 ──
+    function gotoPage(url) {
+      if (window !== window.top) {
+        window.top.navigateTo(url);
+      } else {
+        window.location.href = url === 'home.html' ? 'index.html' : url;
+      }
+    }
+
+    function navigate(page) {
+      const routes = {
+        characters: 'characters.html',
+        places:     'places.html',
+        webtoon:    'webtoon.html',
+      };
+
+      if (page === 'chat') {
+        alert('대화하기 링크가 아직 설정되지 않았습니다.');
+        return;
+      }
+
+      if (routes[page]) gotoPage(routes[page]);
+    }
+  </script>
+
+</body>
+</html>

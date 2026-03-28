@@ -186,8 +186,6 @@
 </head>
 <body>
 
-  <audio id="bgm" src="rsc/blood-soaked duke.mp3" loop></audio>
-
   <!-- 뒤로 버튼 -->
   <div class="back-btn" onclick="goBack()">
     <img src="rsc/icon_backArrow.png" alt="">
@@ -256,55 +254,15 @@
   </div>
 
   <script>
-    const bgm = document.getElementById('bgm');
-
-    function saveBGMState() {
-      sessionStorage.setItem('bgm-state', JSON.stringify({
-        time: bgm.currentTime,
-        paused: bgm.paused
-      }));
-    }
-
-    window.addEventListener('pagehide', saveBGMState);
-    window.addEventListener('beforeunload', saveBGMState);
-
-    window.addEventListener('pageshow', function(e) {
-      if (!e.persisted) return;
-      const raw = sessionStorage.getItem('bgm-state');
-      const state = raw ? JSON.parse(raw) : null;
-      if (state && state.paused) return;
-      bgm.play().catch(() => {});
-    });
-
-    (function restoreBGM() {
-      const raw = sessionStorage.getItem('bgm-state');
-      const state = raw ? JSON.parse(raw) : null;
-
-      if (state) {
-        bgm.currentTime = state.time || 0;
-        if (state.paused) return;
+    function gotoPage(url) {
+      if (window !== window.top) {
+        window.top.navigateTo(url);
+      } else {
+        window.location.href = url === 'home.html' ? 'index.html' : url;
       }
-
-      bgm.play().catch(() => {
-        const resume = () => {
-          bgm.play().catch(() => {});
-          document.removeEventListener('click', resume);
-          document.removeEventListener('keydown', resume);
-        };
-        document.addEventListener('click', resume);
-        document.addEventListener('keydown', resume);
-      });
-    })();
-
-    function goBack() {
-      saveBGMState();
-      window.location.href = 'index.html';
     }
-
-    function goToChar(name) {
-      saveBGMState();
-      window.location.href = name + '.html';
-    }
+    function goBack() { gotoPage('home.html'); }
+    function goToChar(name) { gotoPage(name + '.html'); }
   </script>
 
 </body>
