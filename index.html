@@ -22,17 +22,22 @@
     const bgm = document.getElementById('bgm');
     const frame = document.getElementById('main-frame');
 
+    // 사용자가 의도적으로 음악을 끈 상태인지 추적
+    window.bgmUserPaused = false;
+
     // ── 자식 iframe에서 호출하는 네비게이션 함수 ──
     window.navigateTo = function(url) {
       frame.src = url;
     };
 
-    // ── BGM 재생 시도 ──
+    // ── BGM 재생 시도 (사용자가 끈 경우에는 재생 안 함) ──
     function tryPlay() {
-      return bgm.play().catch(() => null);
+      if (!window.bgmUserPaused) {
+        bgm.play().catch(() => null);
+      }
     }
 
-    // iframe 로드 시마다 재생 시도 (동일 출처 iframe 내 사용자 제스처가 unlock해줌)
+    // iframe 로드 시마다 재생 시도
     frame.addEventListener('load', function() {
       tryPlay();
     });

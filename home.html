@@ -231,8 +231,13 @@
     function setMusic(on) {
       const bgm = getBGM();
       if (!bgm) return;
-      if (on) bgm.play().catch(() => {});
-      else bgm.pause();
+      if (on) {
+        try { if (window.top !== window) window.top.bgmUserPaused = false; } catch(e) {}
+        bgm.play().catch(() => {});
+      } else {
+        try { if (window.top !== window) window.top.bgmUserPaused = true; } catch(e) {}
+        bgm.pause();
+      }
     }
 
     // 부모 BGM 상태 변화에 따라 UI 동기화
@@ -244,10 +249,12 @@
       syncUI();
     }
 
-    // 첫 번째 상호작용 시 부모 frame의 BGM 재생 unlock
+    // 첫 번째 상호작용 시 부모 frame의 BGM 재생 unlock (사용자가 끈 경우 제외)
     document.addEventListener('click', function() {
       const b = getBGM();
-      if (b) b.play().catch(() => {});
+      let userPaused = false;
+      try { userPaused = (window.top !== window) ? window.top.bgmUserPaused : false; } catch(e) {}
+      if (b && !userPaused) b.play().catch(() => {});
     }, { once: true });
 
     // ── 네비게이션 ──
