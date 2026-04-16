@@ -20,23 +20,35 @@
     .char-image-wrap { position: absolute; left: 528px; top: 0; right: 0; bottom: 0; z-index: 0; pointer-events: none; display: flex; align-items: flex-end; overflow: hidden; }
     .char-img { height: 100%; width: auto; display: block; flex-shrink: 0; margin-left: auto; }
     .back-btn { display: inline-flex; align-items: flex-start; gap: 5px; cursor: pointer; flex-shrink: 0; margin-bottom: 12px; user-select: none; position: relative; z-index: 2; }
-    .back-btn img { width: 70px; height: 32px; object-fit: contain; }
-    .back-btn span { color: #000; font-family: 'Heir of Light', sans-serif; font-size: 20px; font-weight: 700; line-height: normal; }
+    .back-btn img { width: clamp(40px, 5.5vw, 70px); height: auto; aspect-ratio: 70/32; object-fit: contain; }
+    .back-btn span { color: #000; font-family: 'Heir of Light', sans-serif; font-size: clamp(13px, 1.6vw, 20px); font-weight: 700; line-height: normal; }
     .back-btn:hover { opacity: 0.65; }
     .page-layout { flex: 1; min-height: 0; position: relative; display: flex; flex-direction: column; }
-    .text-box { display: flex; width: 480px; flex-direction: column; align-items: flex-start; gap: 56px; flex: 1 1 0; min-height: 0; overflow-y: auto; padding-bottom: 48px; scrollbar-width: none; position: relative; z-index: 1; }
+    .text-box { display: flex; width: min(480px, 90vw); flex-direction: column; align-items: flex-start; gap: clamp(24px, 4vw, 56px); flex: 1 1 0; min-height: 0; overflow-y: auto; padding-bottom: 48px; scrollbar-width: none; position: relative; z-index: 1; }
     .text-box::-webkit-scrollbar { display: none; }
     .name-box { display: flex; width: auto; flex-direction: column; align-items: flex-start; gap: 0; }
-    .name-en { align-self: stretch; color: #000; font-family: 'Angel wish', serif; font-size: 66px; font-weight: 400; line-height: normal; }
+    .name-en { align-self: stretch; color: #000; font-family: 'Angel wish', serif; font-size: clamp(32px, 5vw, 66px); font-weight: 400; line-height: normal; }
     .name-sub { display: flex; align-items: flex-end; gap: 16px; }
-    .name-ko { color: #000; font-family: 'Heir of Light', sans-serif; font-size: 28px; font-weight: 700; line-height: normal; }
-    .name-age { color: #000; font-family: 'Heir of Light', sans-serif; font-size: 14px; font-weight: 400; line-height: normal; }
+    .name-ko { color: #000; font-family: 'Heir of Light', sans-serif; font-size: clamp(16px, 2.2vw, 28px); font-weight: 700; line-height: normal; }
+    .name-age { color: #000; font-family: 'Heir of Light', sans-serif; font-size: clamp(10px, 1.1vw, 14px); font-weight: 400; line-height: normal; }
     .summary-box { display: flex; width: auto; flex-direction: column; align-items: flex-start; gap: 8px; }
     .summary-item { display: flex; align-items: center; gap: 8px; }
-    .summary-item img { width: 72px; height: 18px; aspect-ratio: 4/1; object-fit: contain; flex-shrink: 0; }
-    .summary-text { color: #000; font-family: 'Heir of Light', sans-serif; font-size: 20px; font-weight: 700; line-height: normal; white-space: nowrap; }
-    .description { color: #000; font-family: 'Heir of Light', sans-serif; font-size: 18px; font-weight: 400; line-height: 28px; }
+    .summary-item img { width: clamp(40px, 5.7vw, 72px); height: auto; aspect-ratio: 4/1; object-fit: contain; flex-shrink: 0; }
+    .summary-text { color: #000; font-family: 'Heir of Light', sans-serif; font-size: clamp(13px, 1.6vw, 20px); font-weight: 700; line-height: normal; white-space: nowrap; }
+    .description { color: #000; font-family: 'Heir of Light', sans-serif; font-size: clamp(13px, 1.4vw, 18px); font-weight: 400; line-height: clamp(20px, 2.2vw, 28px); }
     .description p + p { margin-top: 16px; }
+
+    /* ── 반응형: 680px 이하 → 이미지가 글자 하단으로 ── */
+    @media (max-width: 680px) {
+      html, body { height: auto; overflow-y: auto; overflow-x: hidden; }
+      body { min-height: 100vh; padding: 24px 16px 32px; }
+      .back-btn { order: 0; }
+      .page-layout { order: 1; flex: none; min-height: unset; display: block; }
+      .text-box { width: 100%; height: auto; flex: none; min-height: unset; overflow: visible; padding-bottom: 0; }
+      .name-box, .summary-box { width: 100%; }
+      .char-image-wrap { order: 2; position: static; left: auto; right: auto; top: auto; bottom: auto; width: auto; height: auto; display: block; margin: 24px -16px -32px -16px; overflow: hidden; }
+      .char-img { height: auto; width: 100%; max-width: none; margin-left: 0; display: block; }
+    }
   </style>
 </head>
 <body>

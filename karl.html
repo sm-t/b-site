@@ -55,8 +55,8 @@
       position: relative;
       z-index: 2;
     }
-    .back-btn img { width: 70px; height: 32px; object-fit: contain; }
-    .back-btn span { color: #000; font-family: 'Heir of Light', sans-serif; font-size: 20px; font-weight: 700; line-height: normal; }
+    .back-btn img { width: clamp(40px, 5.5vw, 70px); height: auto; aspect-ratio: 70/32; object-fit: contain; }
+    .back-btn span { color: #000; font-family: 'Heir of Light', sans-serif; font-size: clamp(13px, 1.6vw, 20px); font-weight: 700; line-height: normal; }
     .back-btn:hover { opacity: 0.65; }
 
     /* ── 페이지 레이아웃 ── */
@@ -69,10 +69,10 @@
     /* ── 좌측 텍스트 박스 ── */
     .text-box {
       display: flex;
-      width: 354px;
+      width: min(354px, 90vw);
       flex-direction: column;
       align-items: flex-start;
-      gap: 56px;
+      gap: clamp(24px, 4vw, 56px);
       height: 100%;
       overflow-y: auto;
       padding-bottom: 48px;
@@ -85,7 +85,7 @@
     /* ── 이름 박스 ── */
     .name-box {
       display: flex;
-      width: 305px;
+      width: min(305px, 85vw);
       flex-direction: column;
       align-items: flex-start;
       gap: 0;
@@ -94,7 +94,7 @@
       align-self: stretch;
       color: #000;
       font-family: 'Angel wish', serif;
-      font-size: 66px;
+      font-size: clamp(32px, 5vw, 66px);
       font-style: normal;
       font-weight: 400;
       line-height: normal;
@@ -107,7 +107,7 @@
     .name-ko {
       color: #000;
       font-family: 'Heir of Light', sans-serif;
-      font-size: 28px;
+      font-size: clamp(16px, 2.2vw, 28px);
       font-style: normal;
       font-weight: 700;
       line-height: normal;
@@ -115,7 +115,7 @@
     .name-age {
       color: #000;
       font-family: 'Heir of Light', sans-serif;
-      font-size: 14px;
+      font-size: clamp(10px, 1.1vw, 14px);
       font-style: normal;
       font-weight: 400;
       line-height: normal;
@@ -124,7 +124,7 @@
     /* ── 요약 박스 ── */
     .summary-box {
       display: flex;
-      width: 230px;
+      width: min(230px, 70vw);
       flex-direction: column;
       align-items: flex-start;
       gap: 8px;
@@ -145,7 +145,7 @@
     .summary-text {
       color: #000;
       font-family: 'Heir of Light', sans-serif;
-      font-size: 20px;
+      font-size: clamp(13px, 1.6vw, 20px);
       font-style: normal;
       font-weight: 700;
       line-height: normal;
@@ -155,12 +155,24 @@
     .description {
       color: #000;
       font-family: 'Heir of Light', sans-serif;
-      font-size: 18px;
+      font-size: clamp(13px, 1.4vw, 18px);
       font-style: normal;
       font-weight: 400;
-      line-height: 28px;
+      line-height: clamp(20px, 2.2vw, 28px);
     }
     .description p + p { margin-top: 16px; }
+
+    /* ── 반응형: 680px 이하 → 이미지가 글자 하단으로 ── */
+    @media (max-width: 680px) {
+      html, body { height: auto; overflow-y: auto; overflow-x: hidden; }
+      body { min-height: 100vh; padding: 24px 16px 32px; }
+      .back-btn { order: 0; }
+      .page-layout { order: 1; flex: none; min-height: unset; display: block; }
+      .text-box { width: 100%; height: auto; flex: none; min-height: unset; overflow: visible; padding-bottom: 0; }
+      .name-box, .summary-box { width: 100%; }
+      .char-image-wrap { order: 2; position: static; left: auto; right: auto; top: auto; bottom: auto; width: auto; height: auto; display: block; margin: auto -16px -32px -16px; overflow: hidden; }
+      .char-img { height: auto; width: 100%; max-width: none; margin-left: 0; display: block; }
+    }
   </style>
 </head>
 <body>
