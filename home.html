@@ -200,9 +200,9 @@
         <span>웹툰보기</span>
       </div>
 
-      <div class="menu-item" onclick="navigate('chat')">
+      <div class="menu-item" onclick="navigate('discord')">
         <img class="arrow" src="rsc/icon_pin.png" alt="">
-        <a href="#" id="chat-link">대화하기</a>
+        <span>디스코드</span>
         <img class="arrow arrow-right" src="rsc/icon_pin.png" alt="">
       </div>
     </nav>
@@ -273,8 +273,8 @@
         webtoon:    'webtoon.html',
       };
 
-      if (page === 'chat') {
-        alert('대화하기 링크가 아직 설정되지 않았습니다.');
+      if (page === 'discord') {
+        window.open('https://discord.gg/NGbzXxBy', '_blank');
         return;
       }
 
