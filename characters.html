@@ -74,13 +74,22 @@
       display: flex;
       flex-direction: row;
       gap: 16px;
+      align-self: center;
+      align-items: center;
+      /* 높이 기반 / 너비 기반 / 최대값 중 가장 작은 값 */
+      --card-w: min(
+        calc((100vh - 128px) * 1080 / 1912),
+        calc((100vw - 128px) / 3),
+        900px
+      );
     }
 
     /* ── 칼 샤크센 메인 카드 ── */
     .karl-card {
       flex: 0 0 auto;
-      width: min(476px, 35vw);
-      /* height는 flex stretch로 부모 채움 */
+      width: var(--card-w);
+      height: calc(var(--card-w) * 1912 / 1080);
+      max-height: 100%;
       border: 3px solid #000;
       background: url('rsc/img_karl_thumbnail.png') top center / cover no-repeat;
       display: flex;
@@ -132,16 +141,19 @@
 
     /* ── 나머지 6인 그리드 ── */
     .others-grid {
-      flex: 1 1 0;
+      flex: 0 0 auto;
       min-width: 0;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, var(--card-w));
       grid-template-rows: repeat(3, 1fr);
       gap: 16px;
+      height: calc(var(--card-w) * 1912 / 1080);
+      max-height: 100%;
     }
 
     /* ── 소형 캐릭터 카드 ── */
     .char-card {
+      max-width: 900px;
       border: 3px solid #000;
       background: top center / cover no-repeat;
       display: flex;
@@ -197,15 +209,20 @@
         flex-direction: column;
         overflow: visible;
         min-height: unset;
+        align-items: stretch;
       }
       .karl-card {
         width: 100%;
+        height: auto;
+        max-height: none;
         min-width: 340px;
         flex: none;
         aspect-ratio: 1080 / 1912;
       }
       .others-grid {
         width: 100%;
+        height: auto;
+        max-height: none;
         min-width: 340px;
         flex: none;
         grid-template-columns: 1fr;
